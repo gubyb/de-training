@@ -8,17 +8,19 @@
 
 # COMMAND ----------
 
-
 # DBTITLE 1,Setup Variables
+
 # input your details
-username = f"odl_instructor_1280678@databrickslabs.com"
-user_prefix = f"kb"
+userName = spark.sql("SELECT current_user()").first()[0]
+user_prefix = userName.split('@')[0]
 
 # Setup all required paths
-source_repo_path = f"/Workspace/Repos/{username}/de-training/DE Training Pulse Check (Responses) - Form Responses 1.csv"
-my_catalog = f"{user_prefix}_utrecht_training"
+source_repo_path = f"/Workspace/Shared/de_training_data/Oslo DE Training Pulse Check.csv"
+my_catalog = f"{user_prefix}_training"
 my_volume = f"pulse_check"
 target_file_path = f"/Volumes/{my_catalog}/bronze/{my_volume}/pulse_data.csv"
+
+spark.conf.set("de_training.my_catalog", my_catalog)
 
 # COMMAND ----------
 
@@ -84,3 +86,13 @@ transfomed_df = silver_df.withColumn("rating", silver_df["rating"].cast(IntegerT
 
 # Save as silver table
 transfomed_df.write.mode("overwrite").saveAsTable(f"{my_catalog}.silver.transformed_pulse_data")
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC SELECT * FROM ${de_training.my_catalog}.silver.transformed_pulse_data
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC -- DROP CATALOG ${de_training.my_catalog} CASCADE 
