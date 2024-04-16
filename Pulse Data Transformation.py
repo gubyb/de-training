@@ -10,7 +10,7 @@
 
 # DBTITLE 1,Setup Variables
 
-# input your details
+# input your detailz
 userName = spark.sql("SELECT current_user()").first()[0]
 user_prefix = userName.split('@')[0]
 
